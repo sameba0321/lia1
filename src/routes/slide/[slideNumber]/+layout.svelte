@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from "$app/navigation"
 	import { page } from "$app/stores"
+	import { SlideTimer } from "$lib/utilities/stores/SlideTimers"
+	import { onDestroy, onMount } from "svelte"
 
 	const MAX_SLIDE = 20
 	const MIN_SLIDE = 1
@@ -9,6 +11,19 @@
 	$: allownext = !(slideNumber >= MAX_SLIDE)
 	$: previousslide = `/slide/${slideNumber - 1}`
 	$: nextslide = `/slide/${slideNumber + 1}`
+	$: if ($SlideTimer === 0 && allownext) {
+		goto(nextslide)
+		SlideTimer.reset()
+	}
+
+	onMount(() => {
+		SlideTimer.start()
+	})
+
+	onDestroy(() => {
+		SlideTimer.stop()
+		SlideTimer.reset()
+	})
 </script>
 
 <svelte:body
@@ -24,33 +39,70 @@
 		}
 	}} />
 
-<div class="heigth-100p grid-stack">
-	<slot />
-	<div id="hover-container">
-		{#if !(slideNumber <= MIN_SLIDE)}
-			<a href={`/slide$(slideNumber) - 1`}>previous</a>
-		{/if}
 
-		{#if !(slideNumber >= MAX_SLIDE)}
-			<a href={`/slide$(slideNumber) + 1`}>next</a>
-		{/if}
+	<slot />
+
+	<span id="span-timer">{$SlideTimer}</span>
+	<span id="span-number">{slideNumber}</span>
+	<div id="hover-container">
+		<div>
+			<button on:click={SlideTimer.reset}>reset timer</button>
+			<button on:click={SlideTimer.start}>start</button>
+			<button on:click={SlideTimer.stop}>stop</button>
+		</div>
+		<div>
+			{#if !(slideNumber <= MIN_SLIDE)}
+				<a href={previousslide}>previous</a>
+			{/if}
+
+			{#if !(slideNumber >= MAX_SLIDE)}
+				<a href={nextslide}>next</a>
+			{/if}
+		</div>
 	</div>
-</div>
+
 
 <style>
 	#hover-container {
 		place-self: start center;
-		display: flex;
-		gap: 5px;
 	}
 
-	#hover-container > a {
+	#hover-container > div {
 		scale: 0;
-		display: block;
 		transition: scale 0.2s ease-in-out;
+		display: flex;
+		gap: 1em;
+		place-content: center;
 	}
 
-	#hover-container:hover > a {
+	#hover-container:hover > div {
 		scale: 1;
+	}
+
+	#span-number {
+		place-self: start end;
+		animation: rotate 20s linear infinite;
+	}
+	
+
+	#span-timer {
+		place-self: start start;
+		animation: rotate 20s linear infinite;
+	}
+
+	#span-timer,
+	#span-number {
+		opacity: 0.5;
+		margin: 1em;
+        
+	}
+
+    @keyframes rotate {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

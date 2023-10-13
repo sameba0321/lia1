@@ -3,7 +3,7 @@
 
 	import { page } from "$app/stores"
 
-	let slideNumber = $page.params.slideNumber
+	$: slideNumber = $page.params.slideNumber
 </script>
 
 <Slide {slideNumber} />
