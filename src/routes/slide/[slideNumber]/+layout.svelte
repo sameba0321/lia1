@@ -54,7 +54,7 @@
 			{#if !(slideNumber <= MIN_SLIDE)}
 				<a href={previousslide}>previous</a>
 			{/if}
-
+			<a href="/">back</a>
 			{#if !(slideNumber >= MAX_SLIDE)}
 				<a href={nextslide}>next</a>
 			{/if}
