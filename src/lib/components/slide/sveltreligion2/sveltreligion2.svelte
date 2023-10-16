@@ -1,13 +1,13 @@
 <script lang="ts">
+    import image from "./svelte.jpg"
     
-    import image2 from "./erudize.png"
-   
+    import image3 from "./Svelte_Logo.svg.png"
 </script>
 
 <div>
-    
-    <img src={image2} alt="" width="250px">
- 
+    <img src={image} alt="" width="250px">
+   
+    <img src={image3} alt="" width="250px">
     
 </div>
 
